@@ -1,13 +1,14 @@
 <?php
-// 8.
 
 namespace App\UseCases;
 
 use App\Domain\Repositories\CamperRepositoryInterface;
 
-class GetAllCampers{
+class UpdateCamper{
+
     public function __construct(private CamperRepositoryInterface $repo){}
-    public function execute(): array{
-        return $this->repo->getAll();
+
+    public function execute(int $documento,array $data): ?bool{
+        return $this->repo->update($documento,$data);
     }
 }
