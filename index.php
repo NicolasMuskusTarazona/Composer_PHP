@@ -24,5 +24,6 @@ $app = AppFactory::create();
 (require_once 'public/index.php')($app);
 // Ejecutando los script de routes/
 (require_once 'routes/campers.php')($app);
+(require_once 'routes/users.php')($app);
 
 $app->run();
