@@ -5,6 +5,8 @@ require_once "vendor/autoload.php";
 use Slim\Factory\AppFactory;
 use Dotenv\Dotenv;
 use App\Infrastructure\Database\Connection;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Slim\Interfaces\ErrorHandlerInterface;
 
 // Variables de .env
 $dotenv = Dotenv::createImmutable(__DIR__ . '/');
@@ -20,7 +22,12 @@ AppFactory::setContainer($container);
 
 $app = AppFactory::create();
 
-// Ejecutando los script de public/
+$container->set(ResponseFactoryInterface::class, $app->getResponseFactory());
+
+$errorHandler = $app->addErrorMiddleware(true,true,true);
+$errorHandler->setDefaultErrorHandler($container->get(ErrorHandlerInterface::class));
+
+// Ejecutando los script de public
 (require_once 'public/index.php')($app);
 // Ejecutando los script de routes/
 (require_once 'routes/campers.php')($app);
