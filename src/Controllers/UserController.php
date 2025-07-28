@@ -7,10 +7,12 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\DTOs\UserDTO;
 
-class UserController{
-    public function __construct(private UserRepositoryInterface $repo){}
+class UserController
+{
+    public function __construct(private UserRepositoryInterface $repo) {}
 
-    public function createUser(Request $request,Response $response): Response{
+    public function createUser(Request $request, Response $response): Response
+    {
         $data = $request->getParsedBody();
         $dto = new UserDTO(
             nombre: $data['nombre'] ?? '',
@@ -18,19 +20,25 @@ class UserController{
             password: $data['contraseña'] ?? '',
             rol: 'user',
         );
-        
+
+
         $user = $this->repo->create($dto);
-        
+
         $response->getBody()->write(json_encode($user));
         return $response->withStatus(201);
     }
 
-    public function createAdmin(Request $request,Response $response): Response{
+    public function createAdmin(Request $request, Response $response): Response
+    {
         $data = $request->getParsedBody();
-        $data['rol'] = 'admin';
+        $dto = new UserDTO(
+            nombre: $data['nombre'] ?? '',
+            email: $data['correo'] ?? '',
+            password: $data['contraseña'] ?? '',
+            rol: 'admin',
+        );
 
-        $data['password'] = password_hash($data['password'],PASSWORD_DEFAULT);
-        $user = $this->repo->create($data);
+        $user = $this->repo->create($dto);
 
         $response->getBody()->write(json_encode($user));
         return $response->withStatus(201);

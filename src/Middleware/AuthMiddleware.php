@@ -23,7 +23,7 @@ class AuthMiddleware{
         [$email,$password] = explode(':',$decoded);
         $user = User::where('email',$email)->first();
 
-        if(!$user || password_verify($password, $user->password)){
+        if(!$user || !password_verify($password, $user->password)){
             throw new HttpUnauthorizedException($request);
         }
         $request = $request->withAttribute('user',$user);

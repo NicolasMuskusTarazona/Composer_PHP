@@ -2,6 +2,7 @@
 
 namespace App\Handler;
 
+use Exception;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -20,18 +21,19 @@ class CustomErrorHandler implements ErrorHandlerInterface{
     {
         $status = 500;
         $message = "Error interno en el servidor.";
-
-        if($exception instanceof HttpNotFoundException){
+        if ($exception instanceof HttpNotFoundException) {
             $status = 404;
             $message = "Ruta no encontrada";
-        }elseif($exception instanceof InvalidArgumentException){
+        } elseif ($exception instanceof InvalidArgumentException) {
             $status = 422;
             $message = $exception->getMessage();
-        }elseif ($exception instanceof InvalidArgumentException) {
-            $status = 401;
+        } elseif ($exception instanceof \TypeError) {
+            $status = 400;
+            $message = "Error de tipo. Posiblemente datos vacios o mal definidos.";
         }
+        
         $response = $this->response->createResponse($status);
-        $response->getBody()->write(json_encode(['error'=>$message]));
+        $response->getBody()->write(json_encode(['error'=>$exception->getMessage()]));
         return $response->withHeader('Content-Type', 'application/json');
     }
 }
